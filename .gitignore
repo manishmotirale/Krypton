@@ -33,6 +33,9 @@ yarn-error.log*
 .env.production
 .env.development
 
+# KRYPTON runtime state (WhatsApp session, undo backups)
+.krypton/
+
 # vercel
 .vercel
 
@@ -50,12 +53,4 @@ next-env.d.ts
 # OS
 .DS_Store
 Thumbs.db
-
-# documentation
-CHANGELOG.md
-CONTRIBUTING.md
-DISTRIBUTION.md
-HOW_TO_RUN.md
-INSTALL.md
-QUICKSTART.md
 

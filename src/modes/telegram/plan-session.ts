@@ -47,13 +47,19 @@ export function planKeyboard(session: PlanSession) {
 }
 
 export async function refreshPlanUi(
-    ctx: {
-        editMessageText: (t: string, o?: object) => Promise<unknown>;
-    },
-    s: PlanSession
+  ctx: {
+    editMessageText: (t: string, o?: object) => Promise<unknown>;
+  },
+  s: PlanSession,
 ) {
+  try {
     await ctx.editMessageText(planMessage(s), {
-        parse_mode: 'Markdown',
-        reply_markup: planKeyboard(s).reply_markup,
+      parse_mode: "Markdown",
+      reply_markup: planKeyboard(s).reply_markup,
     });
+  } catch {
+    await ctx.editMessageText(planMessage(s), {
+      reply_markup: planKeyboard(s).reply_markup,
+    });
+  }
 }

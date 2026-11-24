@@ -14,9 +14,9 @@ KRYPTON is built with a modular architecture that separates concerns into distin
 ┌─────────────────────────────────────────────────┐
 │              Mode Selection Layer                │
 │                  src/modes/                      │
-│  ┌─────────┬──────────┬──────────┬───────────┐ │
-│  │ Agent   │   Ask    │   Plan   │ Telegram  │ │
-│  └─────────┴──────────┴──────────┴───────────┘ │
+│  ┌───────┬─────┬──────┬──────────┬───────────┐ │
+│  │ Agent │ Ask │ Plan │ WhatsApp │ Telegram  │ │
+│  └───────┴─────┴──────┴──────────┴───────────┘ │
 └─────────────────────┬───────────────────────────┘
                       │
                       ▼
@@ -48,16 +48,18 @@ Core business logic and integrations:
 
 ### `/src/modes`
 Operation modes - the main feature modules:
-- **`/modes/agent`**: Full codebase modification mode
-- **`/modes/ask`**: Read-only query mode
+- **`/modes/agent`**: Full codebase modification mode (`ToolExecutor`, `UndoManager`, `ActionTracker`, `read-only-tools`)
+- **`/modes/ask`**: Multi-turn read-only query mode
 - **`/modes/plan`**: Planning and execution mode
-- **`/modes/telegram`**: Telegram bot integration
+- **`/modes/shared`**: Shared bot runner, chunking, and diff/approval formatters
+- **`/modes/whatsapp`**: WhatsApp Multi-Device bot integration (Baileys)
+- **`/modes/telegram`**: Telegram bot integration (Telegraf)
+- **`/modes/doctor.ts`**: Environment diagnostics, undo CLI, and runtime model switching
 
 ### `/src/lib`
 Shared utilities and helpers:
 - **`logger.ts`**: Structured logging
 - **`error-handler.ts`**: Error handling and recovery
-- **`utils.ts`**: Common utility functions
 - **`version.ts`**: Version information
 
 ### `/src/ui`

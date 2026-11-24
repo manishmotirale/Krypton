@@ -1,12 +1,24 @@
-export const clip = (text: string, max = 4000) =>
-  text.length <= max ? text : text.slice(0, max) + '\n…[truncated]';
+import { splitMessage } from "../shared/bot-runner";
 
-export const replyMd = (
+export async function replyMd(
   ctx: { reply: (text: string, o?: object) => Promise<unknown> },
-  text: string
-) => ctx.reply(clip(text), { parse_mode: 'Markdown' });
+  text: string,
+): Promise<void> {
+  const chunks = splitMessage(text, 3900);
 
-/** Text after /name ... */
+  for (const chunk of chunks) {
+    try {
+      await ctx.reply(chunk, { parse_mode: "Markdown" });
+    } catch {
+      // Fallback to plain text if Telegram rejects unmatched Markdown entities
+      await ctx.reply(chunk);
+    }
+  }
+}
+
+/** Text after /name ... (also handles /name@BotUsername) */
 export function commandArg(fullText: string, name: string): string {
-  return fullText.replace(new RegExp(`^/${name}\\s*`, 'i'), '').trim();
+  return fullText
+    .replace(new RegExp(`^/${name}(?:@\\w+)?\\s*`, "i"), "")
+    .trim();
 }

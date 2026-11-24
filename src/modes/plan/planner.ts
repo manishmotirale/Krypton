@@ -3,18 +3,18 @@ import {
   extractJsonMiddleware,
   generateText,
   stepCountIs,
-  tool,
   wrapLanguageModel,
 } from "ai";
-
 import { z } from "zod";
-import chalk from "chalk";
+import { spinner } from "@clack/prompts";
 
 import { getAgentModel } from "../../core/ai/ai.config";
+import { hasFirecrawlConfig } from "../../config/env";
 import { ActionTracker } from "../agent/action-tracker";
 import { ToolExecutor } from "../agent/tool-executor";
 import { defaultAgentConfig } from "../agent/types";
-import type { Plan, PlanStep } from "./types.ts";
+import { createReadOnlyTools } from "../agent/read-only-tools";
+import type { Plan, PlanStep } from "./types";
 import { createWebTools } from "./web-tools";
 
 const planSchema = z.object({
@@ -32,119 +32,65 @@ const planSchema = z.object({
     .max(15),
 });
 
-function readOnlyTools(executor: ToolExecutor) {
-  return {
-    read_file: tool({
-      description:
-        "Read a file from the codebase. Use a path relative to the root of the project root.",
-
-      inputSchema: z.object({
-        path: z.string().describe("The relative path to the file to read."),
-      }),
-
-      execute: async ({ path: p }) => executor.readFile(p),
-    }),
-
-    list_files: tool({
-      description: "List files and directories under a path.",
-      inputSchema: z.object({
-        path: z.string(),
-        recursive: z.boolean().optional().default(false),
-      }),
-      execute: async ({ path: p, recursive }) =>
-        executor.listFiles(p, recursive),
-    }),
-
-    search_files: tool({
-      description:
-        'Find files matching a glob pattern (e.g. "*.ts", "**/*.md"). Optional content substring filter.',
-      inputSchema: z.object({
-        root: z.string().describe("Directory to search, relative to root"),
-        pattern: z
-          .string()
-          .describe("Glob-like pattern using * and ** (forward slashes)"),
-        content_contains: z.string().optional(),
-      }),
-      execute: async ({ root, pattern, content_contains }) =>
-        executor.searchFiles(root, pattern, content_contains),
-    }),
-
-    analyze_codebase: tool({
-      description:
-        "Summarize structure: file counts, size, extensions. Read-only.",
-      inputSchema: z.object({
-        path: z.string().default("."),
-      }),
-      execute: async ({ path: p }) => executor.analyzeCodebase(p),
-    }),
-
-    list_skills: tool({
-      description:
-        "List absolute paths to SKILL.md files under configured skill directories (Cursor / Claude).",
-      inputSchema: z.object({}),
-      execute: async () => executor.listSkills(),
-    }),
-
-    read_skill: tool({
-      description:
-        "Read a SKILL.md file. Path must be absolute and under skill roots, or use list_skills.",
-      inputSchema: z.object({
-        path: z.string(),
-      }),
-      execute: async ({ path: p }) => executor.readSkill(p),
-    }),
-  };
-}
-
 const PLAN_INSTRUCTIONS = (codebase: string, hasWeb: boolean) =>
   [
-    "You are a Plan-Mode planner. You DO NOT modify files.",
-    `Workspace: ${codebase}`,
-    "Use read-only tools for codebase/skills research.",
+    "You are KRYPTON's Plan-Mode strategist. You break any user goal (personal, workflow, research, automation, document, or engineering) into clear executable steps. You DO NOT modify files directly.",
+    `Local workspace: ${codebase}`,
+    "Use read-only tools if the goal involves local files, projects, or skills.",
     hasWeb
-      ? "Web tools are available (web_search/web_crawl/fetch_url). Use only when needed."
-      : "Web tools are unavailable (NO FIRECRAWL_API_KEY).",
-    "Output must match the provided JSON schema.",
-    "Keep it short: 1-15 steps.",
+      ? "Web tools are available (web_search/web_crawl). Use when external research or live info helps."
+      : "Web tools are unavailable (no FIRECRAWL_API_KEY configured).",
+    "Output must strictly match the provided JSON schema.",
+    "Keep steps focused, actionable, and ordered: 1-15 steps.",
   ].join("\n");
 
-export async function generatePlan(goal: string) {
+export async function generatePlan(
+  goal: string,
+  options?: { silent?: boolean },
+): Promise<Plan> {
   const tracker = new ActionTracker();
   const config = defaultAgentConfig();
   const executor = new ToolExecutor(tracker, config);
 
-  const hasWeb = !!process.env.FIRECRAWL_API_KEY;
+  const hasWeb = hasFirecrawlConfig();
   const model = wrapLanguageModel({
     model: getAgentModel(),
     middleware: extractJsonMiddleware(),
   });
 
   const tools = {
-    ...readOnlyTools(executor),
+    ...createReadOnlyTools(executor),
     ...(hasWeb ? createWebTools(tracker) : {}),
-
   };
 
-  console.log(chalk.cyan("\nResearching and generating/drafting a plan...\n"));
+  const spin = options?.silent ? null : spinner();
+  spin?.start("Researching codebase and drafting implementation plan...");
 
-  const result = await generateText({
-    model,
-    tools,
-    stopWhen: stepCountIs(20),
-    system: PLAN_INSTRUCTIONS(config.codebasePath, hasWeb),
-    prompt: `User goal:\n${goal}`,
-    output: Output.object({ schema: planSchema }),
-  });
+  try {
+    const result = await generateText({
+      model,
+      tools,
+      stopWhen: stepCountIs(20),
+      system: PLAN_INSTRUCTIONS(config.codebasePath, hasWeb),
+      prompt: `User goal:\n${goal}`,
+      output: Output.object({ schema: planSchema }),
+    });
 
-  const validated = planSchema.parse(result.output);
+    spin?.stop("Implementation plan generated.");
 
-  const steps: PlanStep[] = validated.steps.map((step, index) => ({
-    id: `step-${index + 1}`,
-    title: step.title,
-    description: step.description,
-    hints: step.hints,
-    complexity: step.complexity,
-  }));
+    const validated = planSchema.parse(result.output);
 
-  return { goal, researchSummary: validated.researchSummary, steps };
+    const steps: PlanStep[] = validated.steps.map((step, index) => ({
+      id: `step-${index + 1}`,
+      title: step.title,
+      description: step.description,
+      hints: step.hints,
+      complexity: step.complexity,
+    }));
+
+    return { goal, researchSummary: validated.researchSummary, steps };
+  } catch (error) {
+    spin?.stop("Plan generation failed.");
+    throw error;
+  }
 }

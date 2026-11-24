@@ -25,6 +25,20 @@ export interface ActionLog {
   userApproved?: boolean;
 }
 
+export interface ShellExecutionOutput {
+  command: string;
+  exitCode: number | null;
+  stdout: string;
+  stderr: string;
+}
+
+export interface ApplyResult {
+  errors: string[];
+  outputs: ShellExecutionOutput[];
+  appliedCount: number;
+  undoBatchId?: string;
+}
+
 export interface AgentConfig {
   codebasePath: string;
   maxFileSizeToRead: number;
@@ -43,6 +57,7 @@ export const defaultAgentConfig = (): AgentConfig => ({
   excludePatterns: [
     "node_modules",
     ".git",
+    ".krypton",
     "dist",
     "build",
     ".next",
