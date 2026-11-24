@@ -1,5 +1,5 @@
 import type { ActionTracker } from "./action-tracker";
-import type { ActionLog } from "./types";
+import type { ActionLog, ApplyResult } from "./types";
 import chalk from "chalk";
 import { select, isCancel } from "@clack/prompts";
 import { composeBeforeAfter, formatPatch } from "./diff-view";
@@ -50,7 +50,8 @@ function groupPending(pending: ActionLog[]): ReviewGroup[] {
 
     const { before, after } = composeBeforeAfter(sorted);
     const patch = formatPatch(p, before, after);
-    const kinds = [...new Set(sorted.map((x) => x.type))].join(", ");
+    const kinds = [...new Set(sorted.map((x) => x.type.replace(/_/g, " ")))]
+      .join(", ");
 
     groups.push({
       label: `${p} (${kinds})`,
@@ -70,21 +71,64 @@ function groupPending(pending: ActionLog[]): ReviewGroup[] {
   return groups;
 }
 
+function printStagedSummary(groups: ReviewGroup[]): void {
+  console.log(chalk.bold.cyan("\n📦 Staged Changes Summary:"));
+  for (const [idx, g] of groups.entries()) {
+    console.log(chalk.white(`  ${idx + 1}. ${g.label}`));
+  }
+  console.log();
+}
+
+export function printApplyResult(result: ApplyResult): void {
+  for (const out of result.outputs) {
+    console.log(chalk.bold.cyan(`\n💻 Shell: ${out.command}`));
+    if (out.stdout) {
+      console.log(chalk.gray(out.stdout));
+    }
+    if (out.stderr) {
+      console.log(chalk.yellow(out.stderr));
+    }
+  }
+
+  if (result.errors.length) {
+    console.log(chalk.red("\n❌ Some operations reported errors:\n"));
+    for (const error of result.errors) {
+      console.log(chalk.red(`  • ${error}`));
+    }
+  } else {
+    console.log(
+      chalk.green(`\n✓ Applied ${result.appliedCount} operation(s) successfully.`),
+    );
+  }
+
+  if (result.undoBatchId) {
+    console.log(
+      chalk.dim(
+        `  Tip: Run \`krypton undo\` (or select Undo in the menu) to revert this batch.\n`,
+      ),
+    );
+  }
+}
+
 export async function runApprovalFlow(
   tracker: ActionTracker,
 ): Promise<boolean> {
   const pending = tracker.getPendingMutations();
   if (pending.length === 0) {
-    console.log(chalk.bold("\nNo pending actions found.\n"));
+    console.log(chalk.dim("\nNo pending file or shell changes to apply.\n"));
     return false;
   }
 
+  const groups = groupPending(pending);
+  printStagedSummary(groups);
+
   const choice = await select({
-    message: "Apply Stagged Changes?",
+    message: `Apply ${groups.length} staged change group(s)?`,
     options: [
       { value: "all", label: "Approve and apply all changes" },
+      { value: "diff_all", label: "Preview all diffs first" },
       { value: "select", label: "Review one by one" },
-      { value: "cancel", label: "Cancel" },
+      { value: "cancel", label: "Reject all and cancel" },
     ],
   });
 
@@ -92,7 +136,23 @@ export async function runApprovalFlow(
     for (const act of pending) {
       tracker.updateStatus(act.id, "rejected", false);
     }
+    console.log(chalk.yellow("\nStaged changes discarded.\n"));
     return false;
+  }
+
+  if (choice === "diff_all") {
+    for (const group of groups) {
+      console.log(chalk.bold.cyan(`\n─── ${group.label} ───`));
+      if (group.patch) {
+        console.log(
+          renderTerminalMarkdown("```diff\n" + group.patch + "\n```\n"),
+        );
+      } else {
+        console.log(chalk.dim("  (no text diff)\n"));
+      }
+    }
+    // Re-run prompt after previewing diffs
+    return runApprovalFlow(tracker);
   }
 
   if (choice === "all") {
@@ -102,7 +162,7 @@ export async function runApprovalFlow(
     return true;
   }
 
-  for (const group of groupPending(pending)) {
+  for (const group of groups) {
     while (true) {
       const opt = await select({
         message: chalk.bold(group.label),
@@ -111,7 +171,7 @@ export async function runApprovalFlow(
           {
             value: "diff",
             label: "Show Diff",
-            hint: group.patch ? group.patch : "N/A",
+            hint: group.patch ? "View unified diff" : "N/A",
           },
           { value: "reject", label: "Reject" },
         ],
@@ -123,6 +183,7 @@ export async function runApprovalFlow(
         }
         return false;
       }
+
       if (opt === "diff") {
         if (group.patch) {
           console.log(
@@ -130,9 +191,10 @@ export async function runApprovalFlow(
               renderTerminalMarkdown("```diff\n" + group.patch + "\n```\n") +
               "\n",
           );
+        } else {
+          console.log(chalk.dim("\nNo text diff available for this action.\n"));
         }
-
-        continue; // re-prompt for the same group after showing diff
+        continue;
       }
 
       for (const act of group.actionIds) {
@@ -142,7 +204,7 @@ export async function runApprovalFlow(
           opt === "accept",
         );
       }
-      break; // re-prompt for the same group after updating status
+      break;
     }
   }
 

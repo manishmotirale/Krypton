@@ -1,94 +1,53 @@
 import chalk from "chalk";
-import { confirm, isCancel, text } from "@clack/prompts";
-import { ToolLoopAgent, stepCountIs, tool } from "ai";
-import { z } from "zod";
+import { confirm, isCancel, spinner, text } from "@clack/prompts";
+import { ToolLoopAgent, stepCountIs } from "ai";
 import { getAgentModel } from "../../core/ai/ai.config";
+import { getActiveModelId, hasFirecrawlConfig } from "../../config/env";
 import { ActionTracker } from "../agent/action-tracker";
 import { ToolExecutor } from "../agent/tool-executor";
 import { defaultAgentConfig } from "../agent/types";
+import { createReadOnlyTools } from "../agent/read-only-tools";
 import { renderTerminalMarkdown } from "../../ui/terminal-md";
-import { runApprovalFlow } from "../agent/approval";
+import { printApplyResult, runApprovalFlow } from "../agent/approval";
 import { createWebTools } from "../plan/web-tools";
 
-function createAskTools(executor: ToolExecutor) {
-  return {
-    read_file: tool({
-      description:
-        "Read a file from the codebase. Use a path relative to the root of the project root.",
-
-      inputSchema: z.object({
-        path: z.string().describe("The relative path to the file to read."),
-      }),
-
-      execute: async ({ path: p }) => executor.readFile(p),
-    }),
-
-    list_files: tool({
-      description: "List files and directories under a path.",
-      inputSchema: z.object({
-        path: z.string(),
-        recursive: z.boolean().optional().default(false),
-      }),
-      execute: async ({ path: p, recursive }) =>
-        executor.listFiles(p, recursive),
-    }),
-
-    search_files: tool({
-      description:
-        'Find files matching a glob pattern (e.g. "*.ts", "**/*.md"). Optional content substring filter.',
-      inputSchema: z.object({
-        root: z.string().describe("Directory to search, relative to root"),
-        pattern: z
-          .string()
-          .describe("Glob-like pattern using * and ** (forward slashes)"),
-        content_contains: z.string().optional(),
-      }),
-      execute: async ({ root, pattern, content_contains }) =>
-        executor.searchFiles(root, pattern, content_contains),
-    }),
-
-    analyze_codebase: tool({
-      description:
-        "Summarize structure: file counts, size, extensions. Read-only.",
-      inputSchema: z.object({
-        path: z.string().default("."),
-      }),
-      execute: async ({ path: p }) => executor.analyzeCodebase(p),
-    }),
-
-    list_skills: tool({
-      description:
-        "List absolute paths to SKILL.md files under configured skill directories (Cursor / Claude).",
-      inputSchema: z.object({}),
-      execute: async () => executor.listSkills(),
-    }),
-
-    read_skill: tool({
-      description:
-        "Read a SKILL.md file. Path must be absolute and under skill roots, or use list_skills.",
-      inputSchema: z.object({
-        path: z.string(),
-      }),
-      execute: async ({ path: p }) => executor.readSkill(p),
-    }),
-  };
+interface QaTurn {
+  question: string;
+  answer: string;
 }
 
-function askMd(question: string, answer: string): string {
-  return `# Ask Mode\n\n## Question\n\n${question.trim()}\n\n## Answer\n\n${answer.trim()}\n`;
+function formatTranscriptMd(turns: QaTurn[]): string {
+  const sections = turns.map(
+    (t, idx) =>
+      `## ${turns.length > 1 ? `Q${idx + 1}: ` : "Question"}\n\n${t.question.trim()}\n\n### Answer\n\n${t.answer.trim()}`,
+  );
+  return `# KRYPTON Ask Session\n\n${sections.join("\n\n---\n\n")}\n`;
 }
 
-export async function runAskMode() {
-  console.log(chalk.bold(chalk.blueBright("Running in Ask Mode...")));
+function buildConversationPrompt(history: QaTurn[], currentQuestion: string): string {
+  if (history.length === 0) return currentQuestion;
 
-  const questions = await text({
-    message: "What would you like to ask the agent?",
-  });
+  const prior = history
+    .slice(-6)
+    .map(
+      (turn, i) =>
+        `Previous Q${i + 1}: ${turn.question}\nPrevious A${i + 1}: ${turn.answer.slice(0, 1500)}`,
+    )
+    .join("\n\n");
 
-  if (isCancel(questions) || !questions.trim()) return;
+  return `Conversation context so far:\n${prior}\n\nFollow-up question:\n${currentQuestion}`;
+}
+
+export async function runAskMode(initialQuestion?: string) {
+  console.log(
+    chalk.bold.blueBright(`\n🔍 Ask Mode`) +
+      chalk.dim(
+        ` (read-only | model: ${getActiveModelId()} | type "exit" to finish)\n`,
+      ),
+  );
 
   const config = defaultAgentConfig();
-  config.tools.allowFileCreation = true;
+  config.tools.allowFileCreation = true; // only used if user explicitly chooses to save .md
   config.tools.allowFileModification = false;
   config.tools.allowFolderCreation = false;
   config.tools.allowShellExecution = false;
@@ -97,27 +56,82 @@ export async function runAskMode() {
   const executor = new ToolExecutor(tracker, config);
 
   const tools = {
-    ...createAskTools(executor),
-    ...createWebTools(tracker),
-
+    ...createReadOnlyTools(executor),
+    ...(hasFirecrawlConfig() ? createWebTools(tracker) : {}),
   };
 
   const agent = new ToolLoopAgent({
     model: getAgentModel(),
     stopWhen: stepCountIs(20),
+    instructions: [
+      "You are KRYPTON, an all-in-one personal AI assistant in read-only Ask Mode.",
+      "Help with anything the user asks: general questions, writing, research, brainstorming, web search, or inspecting local files/projects.",
+      `Local workspace root (use file/git tools only when relevant): ${config.codebasePath}`,
+    ].join("\n"),
     tools,
   });
 
-  const result = await agent.generate({
-    prompt: questions.trim(),
-  });
+  const turns: QaTurn[] = [];
+  let pendingQuestion = initialQuestion?.trim() || "";
+  const isOneShot = Boolean(pendingQuestion);
 
-  const answer = result.text?.trim() || "(no answer)";
-  console.log(chalk.bold(chalk.greenBright("Agent Answer:")));
-  console.log(renderTerminalMarkdown(answer) + "\n");
+  while (true) {
+    let question = pendingQuestion;
+    pendingQuestion = "";
+
+    if (!question) {
+      const input = await text({
+        message:
+          turns.length === 0
+            ? "What would you like to ask KRYPTON?"
+            : 'Follow-up question (or press Enter / type "exit" to finish):',
+        placeholder: turns.length === 0 ? "Ask anything — general Q&A, research, writing, or files..." : "",
+      });
+
+      if (isCancel(input)) break;
+      const trimmed = input.trim();
+      if (!trimmed || trimmed.toLowerCase() === "exit" || trimmed.toLowerCase() === "/exit") {
+        break;
+      }
+      question = trimmed;
+    }
+
+    const spin = spinner();
+    spin.start("Inspecting codebase and generating answer...");
+
+    let answer = "";
+    try {
+      const result = await agent.generate({
+        prompt: buildConversationPrompt(turns, question),
+        onStepFinish: ({ toolCalls }) => {
+          const names = toolCalls
+            .filter((c): c is NonNullable<typeof c> => Boolean(c))
+            .map((c) => c.toolName)
+            .join(", ");
+          if (names) {
+            spin.message(`Running tools: ${names}...`);
+          }
+        },
+      });
+      answer = result.text?.trim() || "(no answer)";
+      spin.stop("Answer ready.");
+    } catch (error) {
+      spin.stop("Failed to generate answer.");
+      throw error;
+    }
+
+    turns.push({ question, answer });
+
+    console.log(chalk.bold.greenBright("\nAgent Answer:\n"));
+    console.log(renderTerminalMarkdown(answer) + "\n");
+
+    if (isOneShot) break;
+  }
+
+  if (turns.length === 0) return;
 
   const wantsSave = await confirm({
-    message: "Save this answer to a .md file in the current directory?",
+    message: "Save this Q&A session to a .md file in the current directory?",
     initialValue: false,
   });
 
@@ -128,20 +142,27 @@ export async function runAskMode() {
     initialValue: "ask.md",
     validate: (value) => {
       const s = (value ?? "").trim();
-      if (!s) return "Filename cannot be empty, Required!!.";
-      if (s.includes("..") || s.includes("/") || s.includes("\\"))
-        return "No Paths";
-      if (!s.toLowerCase().endsWith(".md")) return "Filename must end with .md";
+      if (!s) return "Filename cannot be empty.";
+      if (s.includes("..") || s.includes("/") || s.includes("\\")) {
+        return "Provide a plain filename without directory separators.";
+      }
+      if (!s.toLowerCase().endsWith(".md")) {
+        return "Filename must end with .md";
+      }
     },
   });
 
   if (isCancel(filename) || !filename.trim()) return;
 
-  executor.createFile(filename, askMd(questions, answer));
+  executor.createFile(filename.trim(), formatTranscriptMd(turns));
 
   const ok = await runApprovalFlow(tracker);
-  if (!ok) return executor.clearStagging();
+  if (!ok) {
+    executor.clearStaging();
+    return;
+  }
 
-  executor.applyApprovedFromTracker();
-  executor.clearStagging();
+  const applyResult = executor.applyApprovedFromTracker();
+  printApplyResult(applyResult);
+  executor.clearStaging();
 }

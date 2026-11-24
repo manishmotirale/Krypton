@@ -1,7 +1,7 @@
 {
   "name": "krypton",
-  "version": "1.0.0",
-  "description": "Think. Act. Automate. - AI-powered coding assistant with CLI and Telegram support",
+  "version": "2.0.0",
+  "description": "Think. Act. Automate. — Your all-in-one personal AI assistant & automation bot across CLI, WhatsApp, and Telegram",
   "module": "src/index.ts",
   "type": "module",
   "private": true,
@@ -12,6 +12,11 @@
     "wakeup": "bun run src/index.ts wakeup",
     "start": "bun run src/index.ts wakeup",
     "dev": "bun --watch src/index.ts wakeup",
+    "whatsapp": "bun run src/index.ts whatsapp",
+    "telegram": "bun run src/index.ts telegram",
+    "doctor": "bun run src/index.ts doctor",
+    "undo": "bun run src/index.ts undo",
+    "test": "bun test",
     "build": "bun build src/index.ts --outdir ./dist --target node",
     "build:exe": "bun build src/index.ts --compile --outfile ./dist/krypton.exe",
     "lint": "tsc --noEmit",
@@ -19,10 +24,12 @@
   },
   "keywords": [
     "ai",
+    "personal-assistant",
+    "ai-agent",
     "automation",
     "cli",
+    "whatsapp",
     "telegram",
-    "coding-assistant",
     "openrouter"
   ],
   "author": "",
@@ -30,18 +37,19 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/diff": "^6.0.0",
-    "@types/figlet": "^1.7.0"
+    "@types/figlet": "^1.7.0",
+    "@types/qrcode-terminal": "^0.12.2"
   },
   "peerDependencies": {
     "typescript": "^7"
   },
   "dependencies": {
-    "@clack/core": "^1.5.1",
     "@clack/prompts": "^1.8.1",
     "@mendable/firecrawl-js": "^4.40.0",
     "@openrouter/ai-sdk-provider": "^3.0.0",
     "@types/marked-terminal": "^6.1.1",
     "@types/node": "^22.20.3",
+    "@whiskeysockets/baileys": "6.7.24",
     "ai": "^7.0.105",
     "chalk": "^6.0.0",
     "commander": "^15.0.0",
@@ -49,6 +57,8 @@
     "figlet": "^1.11.4",
     "marked": "^18.0.13",
     "marked-terminal": "^7.3.0",
+    "pino": "^10.4.0",
+    "qrcode-terminal": "^0.12.0",
     "telegraf": "^4.16.3",
     "zod": "^3.23.8"
   }

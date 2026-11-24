@@ -10,6 +10,7 @@ export function formatPatch(
     context: 3,
   });
 }
+
 export function composeBeforeAfter(sorted: ActionLog[]): {
   before: string;
   after: string;
@@ -17,15 +18,15 @@ export function composeBeforeAfter(sorted: ActionLog[]): {
   const first = sorted[0]!;
   const last = sorted[sorted.length - 1]!;
 
+  const before =
+    first.type === "file_create" ? "" : (first.details.before ?? "");
+
   if (last.type === "file_delete") {
     return {
-      before: last.details.before ?? "",
+      before: before || (last.details.before ?? ""),
       after: "",
     };
   }
-
-  const before =
-    first.type === "file_create" ? "" : (first.details.before ?? "");
 
   const after = last.details.after ?? "";
 

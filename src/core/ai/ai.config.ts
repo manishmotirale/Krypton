@@ -1,12 +1,15 @@
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+import { getActiveModelId } from "../../config/env";
+import { KryptonError } from "../../lib/error-handler";
 
-export function getAgentModel() {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  const modelId = process.env.OPENROUTER_DEFAULT_MODEL;
+export function getAgentModel(modelOverride?: string) {
+  const apiKey = process.env.OPENROUTER_API_KEY?.trim();
+  const modelId = modelOverride?.trim() || getActiveModelId();
 
-  if (!apiKey || !modelId) {
-    throw new Error(
-      "Missing required environment variables: OPENROUTER_API_KEY and OPENROUTER_DEFAULT_MODEL must be set in .env file"
+  if (!apiKey) {
+    throw new KryptonError(
+      "Missing OPENROUTER_API_KEY. Please set OPENROUTER_API_KEY in your .env file (run `krypton doctor` to check setup).",
+      "MISSING_API_KEY",
     );
   }
 

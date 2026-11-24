@@ -7,20 +7,21 @@
 ### *Think. Act. Automate.*
 
 <p align="center">
+  <a href="#-what-is-krypton">About</a> •
   <a href="#-features">Features</a> •
   <a href="#-quick-start">Quick Start</a> •
-  <a href="#-installation">Installation</a> •
-  <a href="#-usage">Usage</a> •
-  <a href="#-architecture">Architecture</a> •
-  <a href="#-distribution">Distribution</a>
+  <a href="#-modes">Modes</a> •
+  <a href="#-whatsapp-bot-mode">WhatsApp Bot</a> •
+  <a href="#-telegram-bot-mode">Telegram Bot</a> •
+  <a href="#-project-structure">Structure</a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge" alt="Version"/>
+  <img src="https://img.shields.io/badge/version-2.0.0-blue?style=for-the-badge" alt="Version"/>
   <img src="https://img.shields.io/badge/Bun-1.4.2%2B-black?style=for-the-badge&logo=bun&logoColor=white" alt="Bun"/>
-  <img src="https://img.shields.io/badge/TypeScript-5.x-blue?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
-  <img src="https://img.shields.io/badge/AI-Powered-purple?style=for-the-badge" alt="AI Powered"/>
-  <img src="https://img.shields.io/badge/Telegram-Bot-blue?style=for-the-badge&logo=telegram" alt="Telegram"/>
+  <img src="https://img.shields.io/badge/TypeScript-Strict-blue?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/WhatsApp-Bot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" alt="WhatsApp"/>
+  <img src="https://img.shields.io/badge/Telegram-Bot-26A5E4?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram"/>
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License"/>
 </p>
 
@@ -30,17 +31,19 @@
 
 ## 🎯 What is KRYPTON?
 
-**KRYPTON** is an AI-powered coding companion that helps you understand, modify, and interact with your codebase using natural language.
+**KRYPTON** is your **all-in-one personal AI assistant and automation bot** — accessible right from your terminal, **WhatsApp**, or **Telegram**.
 
-It provides multiple ways to work with a project:
+Use KRYPTON for anything you need done:
+- 💬 **Everyday AI Assistant** — ask any question, brainstorm, write emails/documents/notes, summarize content, and learn topics
+- 🌐 **Live Web Research** — search the web and read/scrape web pages automatically (via Firecrawl)
+- 🤖 **Autonomous Task Execution (Agent Mode)** — create, organize, and edit local files, documents, notes, scripts, or projects, and run shell automation commands — always with preview & approval first
+- 📋 **Goal Planning (Plan Mode)** — break any big goal (personal, work, research, or technical) into selectable steps and execute them in order
+- 💚 **WhatsApp Bot** — chat with KRYPTON from your phone in your own dedicated **KRYPTON** WhatsApp chat (no paid API or server needed)
+- 💬 **Telegram Bot** — chat naturally or run commands with inline approval buttons from Telegram
+- ↩️ **Undo Safety Net** — automatic backups before every applied change (`bun run undo` or `/undo`)
+- 🧩 **Custom Skills & Developer Tools** — load reusable `SKILL.md` playbooks, inspect Git repos, search files, and handle coding tasks whenever needed
 
-- 🤖 **Agent Mode** — make controlled changes to your codebase
-- 🔍 **Ask Mode** — inspect and understand your codebase without modifying it
-- 📋 **Plan Mode** — turn complex goals into multi-step implementation plans
-- 💬 **Telegram Bot Mode** — access KRYPTON remotely through Telegram
-- 🌐 **Web Tools** — use web search, scraping, and research when configured
-
-KRYPTON is designed around an **approval-first workflow**, so code changes can be reviewed before they are applied.
+KRYPTON is built around an **approval-first workflow**: it never modifies files or runs commands on your computer until you preview and approve them.
 
 ---
 
@@ -50,36 +53,30 @@ KRYPTON is designed around an **approval-first workflow**, so code changes can b
 <tr>
 <td width="50%" valign="top">
 
-### 🤖 Agent Mode
+### 💬 Ask Mode (General & Workspace Q&A)
 
-Full codebase modification with review and approval.
+Read-only conversational AI assistant.
 
-- Create, modify, and delete files
-- Create folders recursively
-- Execute shell commands
-- Search and analyze files
-- Stage changes before applying
-- Visual diff view
-- Explicit approval workflow
-- Review changes one by one
-- Safe and reversible operations
+- Answer general questions, write, summarize, and brainstorm
+- Search the live web and scrape pages (with Firecrawl)
+- Multi-turn follow-up conversation with retained context
+- Read & search local files, notes, folders, and Git repos
+- Load custom Cursor / Claude `SKILL.md` playbooks
+- Save your entire Q&A conversation to a `.md` document
 
 </td>
 <td width="50%" valign="top">
 
-### 🔍 Ask Mode
+### 🤖 Agent Mode (Act & Automate)
 
-Read-only interaction with your codebase.
+Execute real tasks on your machine safely.
 
-- Analyze code structure
-- Search files and content
-- Search by glob pattern
-- Read files and directories
-- Answer questions about the project
-- Generate documentation
-- Save answers as Markdown
-- No file modifications
-- No shell execution
+- Create, edit (`edit_file` / `modify_file`), and delete files
+- Create folders and organize local directories
+- Queue shell/terminal commands with captured output
+- Preview a full staged summary and unified diffs before applying
+- Approve all, review one by one, or reject everything
+- Automatic snapshot backup for one-command **Undo**
 
 </td>
 </tr>
@@ -87,54 +84,39 @@ Read-only interaction with your codebase.
 <tr>
 <td width="50%" valign="top">
 
-### 📋 Plan Mode
+### 📋 Plan Mode (Think Then Execute)
 
-Break complex development goals into executable steps.
+Turn big goals into clear, actionable steps.
 
-- Generate implementation plans
-- Research the codebase before execution
-- Use web tools when configured
-- Select specific steps to execute
-- Complexity ratings
-- Full agent capabilities per step
-- Batch approval workflow
+- Researches your files and the web before planning
+- Produces 1–15 ordered steps with complexity tags (`low` / `medium` / `high`)
+- Pick exactly which steps to run (CLI, WhatsApp, or Telegram)
+- Live step-by-step execution progress
+- Single unified diff review and approval at the end
 
 </td>
 <td width="50%" valign="top">
 
-### 💬 Telegram Bot Mode
+### 💚 WhatsApp & 💬 Telegram Bots
 
-Use KRYPTON remotely through Telegram.
+Use KRYPTON remotely from your phone like a personal AI bot.
 
-- Access Ask, Agent, and Plan modes
-- Inline keyboard controls
-- Approval workflows
-- Diff viewing
-- Real-time responses
-- Owner-only access
-- Dedicated command handlers
+- **WhatsApp Multi-Device** via Baileys — link in 30 seconds with QR code or 8-digit pairing code
+- **Dedicated `"KRYPTON"` WhatsApp Chat** via `/bind` — just type normally without `/` prefixes!
+- **Telegram Natural Chat + Inline Buttons** — message directly or use `/agent`, `/plan`, `/undo`, `/model`
+- Owner-only security (blocks unauthorized numbers and random groups)
+- Automatic message chunking for long replies and diffs
 
 </td>
 </tr>
 </table>
 
-### 🌐 Web Tools
-
-When Firecrawl is configured, KRYPTON can:
-
-- 🔎 Search the web
-- 🌐 Scrape web pages
-- 📚 Gather research context for planning
-
 ### 🔒 Safety First
 
-KRYPTON includes safeguards around codebase operations:
-
-- **Approval Workflow** — changes are reviewed before application
-- **Path Safety** — helps prevent directory traversal
-- **Exclusion Patterns** — protects critical directories
-- **Action Tracking** — records operations for review
-- **Read-Only Ask Mode** — safe codebase exploration
+- **Approval Workflow** — every file write, delete, folder create, and shell command requires explicit approval
+- **Automatic Undo Snapshots** — saved locally in `.krypton/undo/` before applying changes
+- **Path & Secret Protection** — blocks directory escapes (`../`) and protects `.env*`, `.git`, `.krypton`, `node_modules`, and `*.log`
+- **Strict Bot Authorization** — Telegram owner-ID lock; WhatsApp only listens to your bound **KRYPTON** chat, your **Message Yourself** chat, or numbers in `WHATSAPP_ALLOWED_NUMBERS`
 
 ---
 
@@ -142,35 +124,29 @@ KRYPTON includes safeguards around codebase operations:
 
 | Area | Technology |
 |---|---|
-| Runtime | [Bun](https://bun.sh/) |
-| Language | [TypeScript](https://www.typescriptlang.org/) |
-| AI / LLM Gateway | [OpenRouter](https://openrouter.ai/) |
-| Web Tools | [Firecrawl](https://firecrawl.dev/) |
-| Telegram | [Telegraf](https://telegraf.js.org/) |
-| CLI Prompts | [Clack](https://github.com/natemoo-re/clack) |
-| AI SDK | [Vercel AI SDK](https://sdk.vercel.ai/) |
-| Validation | [Zod](https://zod.dev/) |
-| Markdown | Marked / Marked Terminal |
-| Terminal UI | Chalk |
-| Diff Generation | `diff` |
+| Runtime | [Bun](https://bun.sh/) v1.4.2+ |
+| Language | [TypeScript](https://www.typescriptlang.org/) (strict mode) |
+| AI / LLM Gateway | [OpenRouter](https://openrouter.ai/) via [Vercel AI SDK](https://sdk.vercel.ai/) |
+| WhatsApp Bot | [Baileys](https://github.com/WhiskeySockets/Baileys) + `qrcode-terminal` |
+| Telegram Bot | [Telegraf](https://telegraf.js.org/) |
+| Web Research | [Firecrawl](https://firecrawl.dev/) |
+| CLI & Prompts | [Commander](https://github.com/tj/commander.js) & [Clack](https://github.com/natemoo-re/clack) |
+| Validation & Diffs | [Zod](https://zod.dev/), `diff`, Chalk, Figlet, Marked Terminal |
+| Testing | `bun:test` |
 
 ---
 
 # 🚀 Quick Start
 
-The fastest way to start KRYPTON:
-
 ```bash
 bun install
 cp .env.example .env
+# Add your OPENROUTER_API_KEY in .env
+bun run doctor
 bun wakeup
 ```
 
-That's it. 🎉
-
-### First Run
-
-After launching KRYPTON:
+### Interactive Launch Menu
 
 ```text
 ██╗  ██╗██████╗ ██╗   ██╗██████╗ ████████╗ ██████╗ ███╗   ██╗
@@ -179,14 +155,16 @@ After launching KRYPTON:
 ██╔═██╗ ██╔══██╗  ╚██╔╝  ██╔═══╝    ██║   ██║   ██║██║╚██╗██║
 ██║  ██╗██║  ██║   ██║   ██║        ██║   ╚██████╔╝██║ ╚████║
 ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═══╝
+  v2.0.0 — Think. Act. Automate.
 
-? Which mode do you want to use?
-❯ AI Mode (CLI)
-  Telegram Mode (Bot)
-  Exit
+◆ Which mode do you want to use?
+● 🤖 AI Mode (CLI) (Agent, Plan, and Ask modes)
+○ 💚 WhatsApp Mode (Bot) (Chat & automate remotely from WhatsApp)
+○ 💬 Telegram Mode (Bot) (Chat & automate remotely from Telegram)
+○ 🩺 System Diagnostics (Check API keys, sessions & workspace)
+○ ↩️  Undo Last Changes (Revert last applied agent batch)
+○ 🚪 Exit
 ```
-
-Use **↑ / ↓** to navigate and **Enter** to select.
 
 ---
 
@@ -194,390 +172,122 @@ Use **↑ / ↓** to navigate and **Enter** to select.
 
 ## Prerequisites
 
-### Required
-
 - [Bun](https://bun.sh/) **v1.4.2+**
-- **Node.js v20+**
-- An [OpenRouter API key](https://openrouter.ai/)
+- An [OpenRouter API key](https://openrouter.ai/) *(supports free & paid models like `openrouter/free`, `openrouter/auto`, Claude, Gemini, GPT)*
+- *(Optional)* [Firecrawl API key](https://firecrawl.dev/) for live web search & scraping
+- *(Optional)* WhatsApp on your phone — no API key needed
+- *(Optional)* Telegram Bot Token + Owner ID from `@BotFather` & `@userinfobot`
 
-### Optional
-
-- [Firecrawl API key](https://firecrawl.dev/) — enables web tools
-- Telegram Bot Token — enables Telegram mode
-- Telegram Owner ID — restricts bot access to the owner
-
----
-
-## Step 1 — Clone the Repository
-
-Replace `<repository-url>` with the actual GitHub repository URL.
+## Setup
 
 ```bash
 git clone <repository-url>
 cd krypton
-```
-
-## Step 2 — Install Dependencies
-
-```bash
 bun install
-```
-
-## Step 3 — Configure Environment Variables
-
-Create your local environment file:
-
-```bash
 cp .env.example .env
 ```
 
-Edit `.env`:
-
-```env
-# Required
-OPENROUTER_API_KEY=your_openrouter_api_key
-OPENROUTER_DEFAULT_MODEL=openrouter/auto
-
-# Optional - Web tools
-FIRECRAWL_API_KEY=your_firecrawl_api_key
-
-# Optional - Telegram bot
-TELEGRAM_BOT_TOKEN=your_telegram_bot_token
-TELEGRAM_OWNER_ID=your_telegram_user_id
-TELEGRAM_LINK=t.me/your_bot_username
-
-# Optional - Custom skills directories
-# SKILLS_DIRS=/path/to/skills/dir1;/path/to/skills/dir2
-```
-
-> **Security:** Never commit your real `.env` file or API keys to Git.
-
-## Step 4 — Start KRYPTON
+Edit `.env` and verify with:
 
 ```bash
-bun wakeup
+bun run doctor
 ```
+
+> **Security:** Never commit `.env` or `.krypton/`. Both are ignored in `.gitignore`.
 
 ---
 
-# 🎮 Usage
-
-## Start Commands
+# 🎮 CLI Commands
 
 | Command | Description |
 |---|---|
-| `bun wakeup` | ⭐ Recommended way to start KRYPTON |
-| `bun start` | Traditional start command |
-| `bun run dev` | Development mode with auto-reload |
-| `bun run src/index.ts wakeup` | Run the wakeup flow directly |
-| `wakeup-krypton` | Global command after installation |
+| `bun wakeup` / `bun start` | Open the interactive KRYPTON menu |
+| `bun run src/index.ts ask [prompt]` | Start Ask Mode (chat, research, write, or inspect files) |
+| `bun run src/index.ts agent [task]` | Start Agent Mode directly |
+| `bun run src/index.ts plan [goal]` | Start Plan Mode directly |
+| `bun run whatsapp` | Launch WhatsApp Bot |
+| `bun run src/index.ts whatsapp --reset-auth` | Reset saved WhatsApp login and scan a new QR |
+| `bun run telegram` | Launch Telegram Bot |
+| `bun run doctor` | Check API keys, model, WhatsApp/Telegram status & undo count |
+| `bun run undo` | Undo the last applied file-change batch (`--yes` skips prompt) |
+| `bun test` | Run automated unit tests |
+| `bun run lint` | TypeScript strict type-check |
+| `bun run build` / `bun run build:exe` | Bundle or compile standalone Windows `.exe` |
+
+### One-Click Launch on Windows
+
+Double-click **`KRYPTON.bat`** in the project root (or **`dist/krypton.exe`** directly) to open CMD straight onto the KRYPTON wake-up menu.
+To rebuild `dist/krypton.exe` after making code changes, run `.\scripts\build-exe.ps1`.
 
 ---
 
-## Global Installation on Windows
+# 💚 WhatsApp Bot Mode
 
-To use `wakeup-krypton` from any directory:
+Control KRYPTON from WhatsApp with **no paid API, no webhooks, and no cloud server**.
 
-```powershell
-.\install-global.ps1
-```
+### Step-by-Step Setup
 
-Then restart your terminal and run:
+1. **Start the bot on your computer:**
+   ```bash
+   bun run whatsapp
+   ```
+2. **Link your phone (first time only):**
+   - On your phone, open **WhatsApp → Settings → Linked Devices → Link a Device** and scan the QR code shown in your terminal.
+   - *(Alternative)* Set `WHATSAPP_PAIRING_PHONE=919876543210` in `.env` to link with an **8-digit pairing code** instead of a QR scan.
+   - Your login is saved in `.krypton/whatsapp-auth/` — next time you run `bun run whatsapp`, it connects automatically.
+3. **Choose where to chat with KRYPTON:**
+   - **Recommended — Dedicated `"KRYPTON"` Chat:**
+     1. In WhatsApp, create a **New Group**, add any 1 contact temporarily, name the group **KRYPTON**, then remove that contact so only you are inside.
+     2. Send `/bind` inside that **KRYPTON** group.
+     3. Pin the **KRYPTON** chat to the top of WhatsApp! Now you can just type normally (e.g. `Write a meeting agenda` or `/agent Create notes.md`) and KRYPTON replies right inside that chat.
+   - **Instant Option — "Message Yourself" Chat:**
+     - Open your own `(You)` chat in WhatsApp (KRYPTON automatically sends its welcome message there) and send commands starting with `/` or `!` (e.g. `/ask ...`, `/agent ...`, `/plan ...`).
+   - **Optional — Separate Bot Phone Number:**
+     - Link a spare WhatsApp / WhatsApp Business phone (`--reset-auth`), add your main number to `WHATSAPP_ALLOWED_NUMBERS` in `.env`, save that number as **KRYPTON**, and message it directly.
 
-```bash
-wakeup-krypton
-```
+### WhatsApp Commands
 
-The installer creates a global script under `~\.krypton\` and adds it to `PATH`.
-
----
-
-# 🧠 Modes
-
-## 🤖 Agent Mode
-
-**Purpose:** Modify your codebase with AI assistance.
-
-### Capabilities
-
-- Create files and folders
-- Modify existing files
-- Delete files
-- Execute shell commands
-- Search and analyze the codebase
-- Read files and directories
-
-### Approval Workflow
-
-```text
-User describes a task
-        ↓
-KRYPTON analyzes the codebase
-        ↓
-Changes are generated
-        ↓
-Diff is shown
-        ↓
-User reviews the changes
-        ↓
-User approves
-        ↓
-Changes are applied
-```
-
-### Example
-
-```text
-? What would you like to do?
-> Add error handling to all API calls
-
-[AI analyzes the project]
-
-[Shows diff for approval]
-
-? Apply Staged Changes?
-❯ Approve and apply all changes
-  Review one by one
-  Cancel
-```
-
----
-
-## 🔍 Ask Mode
-
-**Purpose:** Understand and query your codebase without making changes.
-
-### Capabilities
-
-- Read files
-- List directories recursively
-- Search files by glob pattern
-- Search content
-- Analyze code structure
-- Use Cursor / Claude skills
-- Use web tools when Firecrawl is configured
-- Save answers to Markdown
-
-### Example
-
-```text
-? What would you like to ask the agent?
-> Where is authentication handled in this codebase?
-```
-
-Ask Mode does **not** modify files and does **not** execute shell commands.
-
----
-
-## 📋 Plan Mode
-
-**Purpose:** Plan and execute complex multi-step development work.
-
-### Workflow
-
-```text
-1. User provides a goal
-        ↓
-2. KRYPTON researches the codebase
-        ↓
-3. KRYPTON generates a step-by-step plan
-        ↓
-4. User selects which steps to execute
-        ↓
-5. KRYPTON executes selected steps
-        ↓
-6. User reviews and approves the changes
-```
-
-### Example
-
-```text
-? What is the goal of this plan?
-> Add TypeScript linting with ESLint and auto-fix on save
-```
-
----
-
-## 💬 Telegram Bot Mode
-
-KRYPTON can expose its AI capabilities through Telegram.
-
-### Setup
-
-1. Create a bot with [@BotFather](https://t.me/BotFather)
-2. Get your Telegram user ID from [@userinfobot](https://t.me/userinfobot)
-3. Add the required values to `.env`
-4. Start KRYPTON
-5. Select **Telegram Mode (Bot)**
-
-### Commands
-
-| Command | Purpose |
+| Command | What It Does |
 |---|---|
-| `/start` | Welcome message |
-| `/ask <question>` | Ask about the codebase |
-| `/agent <task>` | Execute an AI-assisted task |
-| `/plan <goal>` | Generate an implementation plan |
+| *(plain text in bound KRYPTON chat)* | Chat directly with KRYPTON about anything |
+| `/ask <anything>` or `/chat <anything>` | Ask questions, write, summarize, search the web, or read files |
+| `/agent <task>` | Perform tasks, create/edit files, or run commands (staged for approval) |
+| `/plan <goal>` | Draft a step-by-step plan and pick steps to run |
+| `diff` • `approve` • `reject` | Review, apply, or discard staged changes |
+| `toggle 1,3` • `all` • `none` • `proceed` | Select and run steps in an active plan |
+| `/bind` / `/unbind` | Make a WhatsApp group your dedicated KRYPTON chat (or unbind it) |
+| `/undo` | Revert the last applied file-change batch |
+| `/model [id \| reset]` | View or switch the active OpenRouter model |
+| `/git` | Quick Git status & recent commits |
+| `/status` | Show active model, workspace, undo snapshots & sessions |
+| `/cancel` | Cancel any active plan or approval session |
+| `/help` | Show all commands |
 
 ---
 
-# 💡 Examples
+# 💬 Telegram Bot Mode
 
-## Example 1 — Ask About the Codebase
-
-```bash
-bun wakeup
-```
-
-Select:
-
-```text
-AI Mode (CLI) → Ask Mode
-```
-
-Then ask:
-
-```text
-What TypeScript files use React?
-```
-
----
-
-## Example 2 — Create a File with Agent Mode
-
-```bash
-bun wakeup
-```
-
-Select:
-
-```text
-AI Mode (CLI) → Agent Mode
-```
-
-Then:
-
-```text
-Create a React component for a login form with email and password fields
-```
-
-KRYPTON generates the change, shows the diff, and waits for approval.
-
----
-
-## Example 3 — Plan a Multi-Step Feature
-
-```bash
-bun wakeup
-```
-
-Select:
-
-```text
-AI Mode (CLI) → Plan Mode
-```
-
-Then:
-
-```text
-Implement a user authentication system
-```
-
-KRYPTON generates a plan, lets you choose steps, and executes the selected work.
-
----
-
-## Example 4 — Use Telegram
-
-```text
-/ask What TypeScript files use React?
-/agent Add error handling to all API calls
-/plan Implement user authentication
-```
+1. Get `TELEGRAM_BOT_TOKEN` from [@BotFather](https://t.me/BotFather) and `TELEGRAM_OWNER_ID` from [@userinfobot](https://t.me/userinfobot).
+2. Add both to `.env` and run `bun run telegram`.
+3. **Just send any message directly** to chat with KRYPTON, or use `/ask`, `/agent`, `/plan`, `/undo`, `/model`, `/git`, `/status`, `/cancel`, `/help`.
 
 ---
 
 # 🔐 Environment Variables
 
-| Variable | Required | Purpose |
-|---|:---:|---|
-| `OPENROUTER_API_KEY` | ✅ | OpenRouter API key |
-| `OPENROUTER_DEFAULT_MODEL` | ✅ | Default model, e.g. `openrouter/auto` |
-| `FIRECRAWL_API_KEY` | ⚠️ | Web search and scraping |
-| `TELEGRAM_BOT_TOKEN` | ⚠️ | Telegram bot access |
-| `TELEGRAM_OWNER_ID` | ⚠️ | Restrict Telegram access to the owner |
-| `TELEGRAM_LINK` | ⚠️ | Bot username / link |
-| `SKILLS_DIRS` | ⚠️ | Custom skills directories |
-
-### Environment Setup
-
-```bash
-cp .env.example .env
-```
-
-Then add your required values.
-
-> API keys belong in `.env`, not in source code or Git history.
-
----
-
-# 🛠️ Configuration
-
-## Agent Configuration
-
-The default agent configuration is defined in:
-
-```text
-src/modes/agent/types.ts
-```
-
-The project configuration includes:
-
-```typescript
-export const defaultAgentConfig = (): AgentConfig => ({
-  codebasePath: process.cwd(),
-  maxFileSizeToRead: 1024 * 1024,
-
-  excludePatterns: [
-    "node_modules",
-    ".git",
-    "dist",
-    "build",
-    ".next",
-    "coverage",
-    "*.log",
-    ".env*",
-  ],
-
-  tools: {
-    allowShellExecution: true,
-    allowFileModification: true,
-    allowFileCreation: true,
-    allowFolderCreation: true,
-  },
-});
-```
-
-## Custom Skills
-
-KRYPTON supports Cursor and Claude skills.
-
-### Default Locations
-
-```text
-~/.cursor/skills-cursor/
-~/.claude/skills/
-```
-
-### Custom Locations
-
-Set:
-
-```env
-SKILLS_DIRS=/path/to/custom/skills;/another/path
-```
-
-Skills are Markdown files named `SKILL.md` that provide additional context to the AI.
+| Variable | Required | Default | Purpose |
+|---|:---:|---|---|
+| `OPENROUTER_API_KEY` | ✅ | — | OpenRouter API key |
+| `OPENROUTER_DEFAULT_MODEL` | ⚠️ | `openrouter/auto` | Default OpenRouter model ID |
+| `FIRECRAWL_API_KEY` | ⚠️ | — | Enables live `web_search` and `web_crawl` |
+| `WHATSAPP_ALLOW_SELF_CHAT` | ⚠️ | `true` | Allow commands in WhatsApp "Message Yourself" |
+| `WHATSAPP_ALLOWED_NUMBERS` | ⚠️ | — | Comma-separated international numbers allowed to message the bot |
+| `WHATSAPP_PAIRING_PHONE` | ⚠️ | — | Optional digits-only phone number for 8-digit pairing code login |
+| `WHATSAPP_AUTH_DIR` | ⚠️ | `.krypton/whatsapp-auth` | Folder storing WhatsApp multi-device session |
+| `TELEGRAM_BOT_TOKEN` | ⚠️ | — | Telegram bot token |
+| `TELEGRAM_OWNER_ID` | ⚠️ | — | Authorized Telegram owner ID |
+| `SKILLS_DIRS` | ⚠️ | `~/.cursor/skills-cursor`, `~/.claude/skills` | Extra semicolon-separated `SKILL.md` directories |
+| `LOG_LEVEL` | ⚠️ | `INFO` | Logging verbosity (`DEBUG`, `INFO`, `WARN`, `ERROR`) |
 
 ---
 
@@ -585,193 +295,83 @@ Skills are Markdown files named `SKILL.md` that provide additional context to th
 
 ```text
 krypton/
-│
-├── 📄 Configuration Files
-│   ├── .env                  # Local environment variables
-│   ├── .env.example          # Environment template
-│   ├── .gitignore            # Git ignore patterns
-│   ├── package.json          # Dependencies and scripts
-│   ├── tsconfig.json         # TypeScript configuration
-│   └── bun.lock              # Bun lock file
-│
-├── 📚 Documentation
-│   ├── README.md             # Main documentation
-│   ├── QUICKSTART.md         # 30-second quick start
-│   ├── INSTALL.md            # Detailed installation
-│   ├── HOW_TO_RUN.md         # Usage guide
-│   ├── CHANGELOG.md          # Version history
-│   ├── CONTRIBUTING.md       # Contribution guide
-│   ├── LICENSE               # MIT License
-│   └── docs/
-│       ├── ARCHITECTURE.md   # System design
-│       └── QUICK_START.md    # Quick reference
-│
-├── 🛠️ Scripts
-│   ├── install-global.ps1    # Global installation
-│   └── test-wakeup.ps1       # Installation test
-│
-├── 🎨 Assets
-│   └── krypton.png           # Logo
-│
-└── 💻 Source Code (src/)
-    │
-    ├── 📌 Entry Point
-    │   └── index.ts          # Main entry point
-    │
-    ├── 🧠 Core
-    │   └── ai/
-    │       ├── index.ts       # AI exports
-    │       └── ai.config.ts   # OpenRouter setup
-    │
-    ├── 📚 Libraries
-    │   ├── logger.ts          # Logging system
-    │   ├── error-handler.ts   # Error handling
-    │   └── utils.ts            # Utility functions
-    │
-    ├── 🎯 Modes
-    │   ├── cli.ts             # CLI orchestrator
-    │   │
-    │   ├── agent/
-    │   │   ├── orchestrator.ts
-    │   │   ├── agent-tools.ts
-    │   │   ├── tool-executor.ts
-    │   │   ├── action-tracker.ts
-    │   │   ├── approval.ts
-    │   │   ├── diff-view.ts
-    │   │   └── types.ts
-    │   │
-    │   ├── ask/
-    │   │   └── orchestrator.ts
-    │   │
-    │   ├── plan/
-    │   │   ├── orchestrator.ts
-    │   │   ├── planner.ts
-    │   │   ├── selection.ts
-    │   │   ├── types.ts
-    │   │   └── web-tools.ts
-    │   │
-    │   └── telegram/
-    │       ├── index.ts
-    │       ├── handlers.ts
-    │       ├── auth.ts
-    │       ├── constants.ts
-    │       ├── text.ts
-    │       ├── agent-run.ts
-    │       ├── approval-session.ts
-    │       └── plan-session.ts
-    │
-    └── 🎨 UI
-        ├── wakeup.ts          # Welcome screen and banner
-        └── terminal-md.ts     # Markdown rendering
+├── KRYPTON.bat                     # One-click Windows launcher
+├── .env.example                    # Environment template
+├── .gitignore                      # Ignores .env, .krypton/, dist/
+├── package.json                    # Dependencies and scripts
+├── tsconfig.json                   # Strict TypeScript config
+├── krypton.png                     # Logo
+├── docs/
+│   └── ARCHITECTURE.md             # System architecture
+├── scripts/
+│   └── build-exe.ps1               # Windows standalone EXE builder (dist/krypton.exe)
+├── tests/
+│   ├── tool-executor.test.ts       # ToolExecutor, security, git & Undo tests
+│   ├── whatsapp.test.ts            # WhatsApp auth, binding & handler tests
+│   └── shared-and-telegram.test.ts # Shared runner & Telegram tests
+└── src/
+    ├── index.ts                    # Commander CLI entry point
+    ├── config/
+    │   └── env.ts                  # Env config, model switching & diagnostics
+    ├── core/ai/
+    │   └── ai.config.ts            # OpenRouter provider factory
+    ├── lib/
+    │   ├── error-handler.ts        # KryptonError & safe wrappers
+    │   ├── logger.ts               # Structured colored logger
+    │   └── version.ts              # App version & metadata
+    ├── ui/
+    │   ├── wakeup.ts               # Banner & main menu loop
+    │   └── terminal-md.ts          # Terminal Markdown renderer
+    └── modes/
+        ├── cli.ts                  # Interactive AI Mode menu
+        ├── doctor.ts               # Diagnostics, Undo & Model Switch CLI
+        ├── shared/
+        │   └── bot-runner.ts       # Shared AI runners, chunking & diff formatters
+        ├── agent/
+        │   ├── orchestrator.ts     # Agent Mode loop
+        │   ├── agent-tools.ts      # Action + read-only tools
+        │   ├── read-only-tools.ts  # Shared read-only, Git & skill tools
+        │   ├── tool-executor.ts    # Safe filesystem, search, git & shell executor
+        │   ├── action-tracker.ts   # Mutation audit log
+        │   ├── undo-manager.ts     # Automatic snapshot backup & rollback
+        │   ├── approval.ts         # Staged summary & diff approval flow
+        │   ├── diff-view.ts        # Unified diff composition
+        │   └── types.ts            # Agent types & config
+        ├── ask/
+        │   └── orchestrator.ts     # Multi-turn read-only Ask Mode
+        ├── plan/
+        │   ├── orchestrator.ts     # Step selection & execution orchestrator
+        │   ├── planner.ts          # Structured JSON plan generator
+        │   ├── selection.ts        # Terminal plan display & picker
+        │   ├── web-tools.ts        # Firecrawl web search & scraping
+        │   └── types.ts            # Plan types
+        ├── telegram/
+        │   ├── index.ts            # Telegraf launcher
+        │   ├── handlers.ts         # Natural chat, commands & inline buttons
+        │   ├── auth.ts             # Owner authorization
+        │   ├── agent-run.ts        # Telegram Ask/Agent/Plan runners
+        │   ├── approval-session.ts # Inline approval session
+        │   ├── plan-session.ts     # Interactive step-toggle session
+        │   ├── constants.ts        # Welcome & help menu
+        │   └── text.ts             # Safe chunked Markdown replies
+        └── whatsapp/
+            ├── index.ts            # Baileys socket, QR/pairing, /bind & reconnect
+            ├── handlers.ts         # Natural chat, commands & interactive sessions
+            ├── auth.ts             # Self-chat, bound group, allowlist & loop guard
+            ├── session.ts          # Plan & approval session state
+            ├── constants.ts        # WhatsApp welcome & help menu
+            └── text.ts             # Message extraction & WhatsApp formatting
 ```
 
 ---
 
-# 🔧 Available Commands
-
-## Development
+# 🧪 Testing & Verification
 
 ```bash
-# Start KRYPTON
-bun wakeup
-bun start
-
-# Development
-bun run dev
-
-# TypeScript checking
-bun run lint
-
-# Build
-bun run build
-
-# Build standalone executable
-bun run build:exe
-
-# Show help and version
-bun wakeup --help
-bun wakeup --version
-
-# Cleanup
-bun run clean
+bun test       # Run all unit tests
+bun run lint   # Strict TypeScript check
+bun run doctor # Verify API keys, model & bot readiness
 ```
-
-## Windows Scripts
-
-```powershell
-# Test installation
-.\test-wakeup.ps1
-
-# Install globally
-.\install-global.ps1
-
-# Build executable
-.\scripts\build-exe.ps1
-
-# Create installer package
-.\scripts\create-installer.ps1
-```
-
-## Telegram
-
-```text
-/start
-/ask <question>
-/agent <task>
-/plan <goal>
-```
-
----
-
-# 🧪 Testing
-
-## Quick Test
-
-Run:
-
-```powershell
-.\test-wakeup.ps1
-```
-
-The supplied test flow checks:
-
-- `--version`
-- `--help`
-- Environment file existence
-- TypeScript compilation
-
-## Manual Testing
-
-### Ask Mode
-
-```text
-AI Mode → Ask Mode
-
-Question:
-What files are in this project?
-```
-
-### Agent Mode
-
-```text
-AI Mode → Agent Mode
-
-Task:
-Create a test.txt file with "Hello World"
-```
-
-### Plan Mode
-
-```text
-AI Mode → Plan Mode
-
-Goal:
-Add a new utility function for date formatting
-```
-
-### Telegram Mode
-
-Use the configured Telegram bot and test `/ask`, `/agent`, and `/plan`.
 
 ---
 
@@ -779,342 +379,20 @@ Use the configured Telegram bot and test `/ask`, `/agent`, and `/plan`.
 
 | Issue | Solution |
 |---|---|
-| `bun: command not found` | Install Bun from [bun.sh](https://bun.sh/) |
-| `.env file not found` | Run `cp .env.example .env` |
-| `OPENROUTER_API_KEY is required` | Add your OpenRouter key to `.env` |
-| `Cannot find module` | Run `bun install` |
-| `wakeup-krypton: command not found` | Restart the terminal and verify `PATH` |
-| Telegram bot not responding | Check `TELEGRAM_BOT_TOKEN` and `TELEGRAM_OWNER_ID` |
-| `Path escapes codebase` | Avoid paths such as `../` that escape the project root |
-| Command hangs | Press `Ctrl+C` and try again |
-| Double-clicking the EXE closes | Run through `Start-KRYPTON.bat` or a terminal |
-
----
-
-# 🏗️ Architecture
-
-KRYPTON is organized around a clear separation between the CLI, AI core, modes, tools, and terminal UI.
-
-```text
-                    ┌───────────────────┐
-                    │      KRYPTON      │
-                    │    CLI / Wakeup   │
-                    └─────────┬─────────┘
-                              │
-                    ┌─────────▼─────────┐
-                    │   Mode Selection  │
-                    └──────┬──────┬─────┘
-                           │      │
-              ┌────────────┘      └──────────────┐
-              ▼                                   ▼
-       ┌─────────────┐                     ┌──────────────┐
-       │  AI Mode    │                     │ Telegram Bot │
-       └──────┬──────┘                     └──────┬───────┘
-              │                                   │
-       ┌──────┼──────────────┐                    │
-       ▼      ▼              ▼                    │
-    Agent    Ask           Plan ◄─────────────────┘
-       │      │              │
-       └──────┴──────┬───────┘
-                     ▼
-             ┌───────────────┐
-             │ AI / OpenRouter│
-             └───────┬───────┘
-                     │
-           ┌─────────┴──────────┐
-           ▼                    ▼
-      Codebase Tools         Web Tools
-           │                    │
-           ▼                    ▼
-      Files / Shell        Firecrawl
-```
-
----
-
-# 📦 Distribution
-
-KRYPTON can be packaged as a standalone Windows executable.
-
-## Build the EXE
-
-```powershell
-.\scripts\build-exe.ps1
-```
-
-## Create the Installer Package
-
-```powershell
-.\scripts\create-installer.ps1
-```
-
-This creates:
-
-```text
-dist/krypton-installer-v1.0.0.zip
-```
-
-### Package Contents
-
-```text
-krypton-installer-v1.0.0.zip
-├── krypton.exe
-├── .env.example
-├── SETUP.md
-├── README.txt
-├── Start-KRYPTON.bat
-└── krypton.png
-```
-
-### Important
-
-The executable does **not** include your `.env` file.
-
-Users need:
-
-1. Their own `.env`
-2. Their own OpenRouter API key
-3. An internet connection for API calls
-4. Firecrawl credentials if web tools are used
-5. Telegram credentials if Telegram mode is used
-
-### Distribution Options
-
-| Method | Setup | Updates | Notes |
-|---|---|---|---|
-| ZIP Download | Medium | Manual | Simple and direct |
-| Web Installer | Easy | Manual | Useful for public distribution |
-| GitHub Releases | Medium | Manual | Version tracking and release history |
-| Electron Wrapper | Complex | Auto-update possible | Additional development work |
-| Code Signing | Medium | Manual | Optional; helps with Windows trust warnings |
-
----
-
-# 🔒 Security
-
-### Never
-
-- Commit `.env` to Git
-- Include real API keys in the executable
-- Share your personal `.env`
-- Hard-code private credentials into source files
-
-### Do
-
-- Ship `.env.example`
-- Let each user provide their own credentials
-- Keep secrets local
-- Review Agent Mode changes before applying them
-
----
-
-# 📈 Project Stats
-
-According to the project documentation:
-
-| Metric | Value |
-|---|---|
-| Version | `1.0.0` |
-| Lines of Code | ~3,500+ |
-| Files | 40+ |
-| Modes | 3 + Bot |
-
----
-
-# 🗺️ Roadmap
-
-## Phase 1 — Core ✅
-
-- [x] Agent Mode
-- [x] Ask Mode
-- [x] Plan Mode
-- [x] Telegram Bot
-- [x] Web Tools
-- [x] Approval Workflow
-
-## Phase 2 — Enhancement 🚧
-
-- [ ] Session persistence
-- [ ] Undo/redo functionality
-- [ ] Git integration
-- [ ] Custom tool plugins
-- [ ] Configuration UI
-- [ ] Performance metrics
-
-## Phase 3 — Advanced 📅
-
-- [ ] Web UI dashboard
-- [ ] Multiple AI providers
-- [ ] Collaborative features
-- [ ] Cloud deployment
-- [ ] Marketplace for tools
-- [ ] Line-level file editing
-
----
-
-# 🤝 Contributing
-
-Contributions are welcome.
-
-## Development Setup
-
-```bash
-git clone https://github.com/your-username/krypton.git
-cd krypton
-
-bun install
-cp .env.example .env
-
-bun run dev
-```
-
-## Guidelines
-
-- Use TypeScript for new code
-- Follow existing project conventions
-- Use meaningful names
-- Keep functions focused
-- Add comments for complex logic
-- Update documentation when needed
-
-### Naming Conventions
-
-| Type | Convention | Example |
-|---|---|---|
-| Files | kebab-case | `agent-tools.ts` |
-| Functions | camelCase | `createAgentTools()` |
-| Classes | PascalCase | `ActionTracker` |
-| Constants | UPPER_SNAKE_CASE | `MAX_FILE_SIZE` |
-
-## Pull Request Flow
-
-1. Fork the repository
-2. Create a feature branch
-3. Make focused changes
-4. Test locally
-5. Update documentation where appropriate
-6. Commit with a descriptive message
-7. Open a Pull Request
-
-Example commit messages:
-
-```text
-feat: add web search tool
-fix: resolve file path escaping issue
-docs: update README with new examples
-```
-
----
-
-# 📝 Changelog
-
-## [1.0.0]
-
-### Added
-
-- Agent Mode
-- Ask Mode
-- Plan Mode
-- Telegram Bot
-- Web Tools
-- Action Tracking
-- Diff View
-- Approval-based file operations
-- Cursor / Claude skills support
-- File and folder operations
-- Shell command execution
-- Glob and content search
-- Codebase statistics
-- Environment validation
-- Configurable agent behavior
-- Exclusion patterns
-- Custom skills directories
-- Interactive CLI prompts
-- Terminal Markdown rendering
-- Telegram inline keyboard controls
-- Structured logging
-- Error handling
-
-### Fixed
-
-- `enssureMarked` → `ensureMarked`
-- `constats.ts` → `constants.ts`
-- `Operattions` → `Operations`
-- `/plan` command logic issue
-
-### Documentation
-
-- Main project documentation
-- Installation instructions
-- Usage guides
-- Contributing guidelines
-- Environment example
-- MIT license documentation
-
----
-
-# 📚 Documentation Map
-
-| Document | Purpose |
-|---|---|
-| `README.md` | Main project documentation |
-| `QUICKSTART.md` | Fast setup |
-| `INSTALL.md` | Detailed installation |
-| `HOW_TO_RUN.md` | Running and usage guide |
-| `docs/ARCHITECTURE.md` | System design |
-| `docs/QUICK_START.md` | Quick reference |
-| `CHANGELOG.md` | Version history |
-| `CONTRIBUTING.md` | Contribution guidelines |
-| `DISTRIBUTION.md` | Executable distribution |
-| `LICENSE` | MIT License |
+| `OPENROUTER_API_KEY` missing | Copy `.env.example` to `.env`, add your key, and check with `bun run doctor` |
+| WhatsApp shows "Try again" on QR scan | Run `bun run src/index.ts whatsapp --reset-auth` directly in your terminal and scan the fresh QR within 30 seconds |
+| Not sure where to chat on WhatsApp | Either open your own `(You)` "Message Yourself" chat, OR create a private **KRYPTON** WhatsApp group and send `/bind` inside it |
+| Need to revert applied file changes | Run `bun run undo` (or send `/undo` on WhatsApp / Telegram) |
+| Telegram bot not replying | Verify `TELEGRAM_BOT_TOKEN` and `TELEGRAM_OWNER_ID` via `bun run doctor` |
 
 ---
 
 # 📜 License
 
-KRYPTON is licensed under the **MIT License**.
-
-```text
-MIT License
-
-Copyright (c) 2024 KRYPTON
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files...
-```
-
-See [`LICENSE`](./LICENSE) for the complete license text.
-
----
-
-# 🙏 Acknowledgments
-
-KRYPTON is built with:
-
-- [Bun](https://bun.sh/)
-- [OpenRouter](https://openrouter.ai/)
-- [Firecrawl](https://firecrawl.dev/)
-- [Telegraf](https://telegraf.js.org/)
-- [Clack](https://github.com/natemoo-re/clack)
-- [Vercel AI SDK](https://sdk.vercel.ai/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Zod](https://zod.dev/)
-
-Special thanks to the open-source projects used for terminal rendering, Markdown processing, colors, and diff generation.
-
----
+Licensed under the **MIT License**. See [`LICENSE`](./LICENSE) for details.
 
 <div align="center">
 
-## 🎉 Ready to Start?
-
-```bash
-bun wakeup
-```
-
 ### **Think. Act. Automate. 🚀**
-
-Made with ❤️ by the KRYPTON team
-
-⭐ Star the repository if you find it helpful.
 
 </div>
